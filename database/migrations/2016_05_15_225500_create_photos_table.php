@@ -17,7 +17,7 @@ class CreatePhotosTable extends Migration
             $table->integer('gallery_id')->unsigned()->index();
             $table->foreign('gallery_id')->references('id')->on('galleries')->onDelete('cascade');
             $table->boolean('is_active')->index()->default(true);
-            $table->string('file'); // filepath
+            $table->string('path'); // filepath
             $table->timestamps();
         });
     }

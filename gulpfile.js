@@ -18,8 +18,10 @@ elixir(function(mix) {
     mix.sass('app.scss', 'public/css/app.css')
        .styles([
 	      'libs/sweetalert.css',
+	      'libs/dropzone.css'
 	   ], 'public/css/libs.css')
        .scripts([
-    	  'libs/sweetalert.min.js'
+    	  'libs/sweetalert.min.js',
+    	  'libs/dropzone.js'
        ], 'public/js/libs.js');
 });

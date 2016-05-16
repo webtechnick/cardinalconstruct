@@ -19,5 +19,6 @@ Route::get('/contact', 'PagesController@contact');
 
 Route::resource('gallery', 'GalleriesController');
 Route::get('gallery/{slug}', 'GalleriesController@show');
+Route::post('gallery/{slug}/photos', 'GalleriesController@addPhoto');
 
 Route::auth();
