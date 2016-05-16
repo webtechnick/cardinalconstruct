@@ -6,9 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
-		protected $fillable = [
-			'body'
-		];
+	/**
+	 * fillable variables
+	 * @var [type]
+	 */
+    protected $fillable = [
+        'body'
+    ];
+
     public function user()
     {
         return $this->belongsTo(App\User::class);

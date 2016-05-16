@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateGalleriesTable extends Migration
+class CreatePhotosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,14 +12,12 @@ class CreateGalleriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('galleries', function (Blueprint $table) {
+        Schema::create('photos', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->index()->unsinged();
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->integer('gallery_id')->unsigned()->index();
+            $table->foreign('gallery_id')->references('id')->on('galleries')->onDelete('cascade');
             $table->boolean('is_active')->index()->default(true);
-            $table->string('title');
-            $table->string('slug')->unique()->index();
-            $table->text('body');
+            $table->string('file'); // filepath
             $table->timestamps();
         });
     }
@@ -31,6 +29,6 @@ class CreateGalleriesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('galleries');
+        Schema::drop('photos');
     }
 }

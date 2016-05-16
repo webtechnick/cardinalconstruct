@@ -15,11 +15,12 @@ class CreatePostsTable extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->index();
+            $table->integer('user_id')->index()->unsigned();
+            $table->foreign('user_id')->references('id')->on('users');
             $table->string('title');
             $table->string('slug')->index();
             $table->date('publish_date')->index()->default(DB::raw('CURRENT_DATE'));
-            $table->integer('is_active')->index()->default(1);
+            $table->boolean('is_active')->index()->default(true);
             $table->text('body');
             $table->timestamps();
         });
