@@ -2,6 +2,9 @@
 
 namespace App;
 
+use App\Comment;
+use App\Gallery;
+use App\Post;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -26,11 +29,23 @@ class User extends Authenticatable
 
     public function posts()
     {
-        return $this->hasMany(App\Post::class);
+        return $this->hasMany(Post::class);
     }
 
     public function comments()
     {
-        return $this->hasMany(App\Comment::class);
+        return $this->hasMany(Comment::class);
+    }
+
+    public function galleries() {
+        return $this->hasMany(Gallery::class);
+    }
+
+    public function owns($model) {
+        return $this->id == $model->user_id;
+    }
+
+    public function addGallery(Gallery $gallery) {
+        return $this->galleries()->save($gallery);
     }
 }

@@ -5,12 +5,21 @@ namespace App\Http\Controllers;
 use App\Facades\Flash;
 use App\Gallery;
 use App\Http\Requests;
+use App\Http\Requests\ChangeGalleryRequest;
 use App\Http\Requests\GalleryRequest;
 use App\Photo;
 use Illuminate\Http\Request;
 
 class GalleriesController extends Controller
 {
+
+    public function __construct() {
+        $this->middleware('auth', ['except' => [
+            'show',
+            'index'
+        ]]);
+        parent::__construct();
+    }
     public function index()
     {
         //Flash::success('This is a success message!');
@@ -24,9 +33,9 @@ class GalleriesController extends Controller
 
     public function store(GalleryRequest $request)
     {
-        $gallery = new Gallery($request->all());
-        $gallery->user_id = 1; //Temp
-        $gallery->save();
+        $gallery = $this->user->addGallery(
+            new Gallery($request->all())
+        );
 
         flash()->success('Gallery successfully saved.');
 
@@ -43,13 +52,9 @@ class GalleriesController extends Controller
         return view('galleries.show', compact('gallery'));
     }
 
-    public function addPhoto($slug, Request $request)
+    public function addPhoto($slug, ChangeGalleryRequest $request)
     {
-        $this->validate($request, [
-            'photo' => 'required|mimes:jpg,jpeg,png,gif'
-        ]);
-
-        $photo = Photo::fromForm($request->file('photo'));
+        $photo = Photo::fromFileUpload($request->file('photo'));
         Gallery::findBySlug($slug)->addPhoto($photo);
 
         return 'Done';

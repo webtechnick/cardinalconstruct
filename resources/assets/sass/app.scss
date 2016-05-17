@@ -1,3 +1,9 @@
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
-@import "partials/flashmessages"
+@import "partials/flashmessages";
+@import "partials/padding";
+
+form.bluedashed {
+	border-style: dashed;
+	border-color: #00ADFF;
+}

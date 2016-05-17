@@ -6,18 +6,30 @@
 
 	<hr>
 
-	<p>{!! nl2br($gallery->body) !!}</p>
+	<div class="row">
+		<div class="col-md-3">
+			<p>{!! nl2br($gallery->body) !!}</p>
+		</div>
+		<div class="col-md-9">
+			@foreach ($gallery->photos->chunk(4) as $set)
+				<div class="row">
+					@foreach ($set as $photo)
+						<div class="col-md-3 mb20">
+							<a href="/{{ $photo->path }}"><img src="/{{ $photo->thumbnail_path }}" alt=""></a>
+						</div>
+					@endforeach
+				</div>
+			@endforeach
 
-	@foreach ($gallery->photos as $photo)
-		<img src="/{{ $photo->path }}" alt="">
-	@endforeach
+			@if ($user && $user->owns($gallery))
+				<hr>
+				<form id="addPhotosForm" action="{{ route('store_photo_path', [$gallery->slug]) }}" method="POST" class="bluedashed dropzone">
+					{{ csrf_field() }}
+				</form>
+			@endif
+		</div>
+	</div>
 
-	<hr>
-
-	<h2>Add Photos</h2>
-	<form id="addPhotosForm" action="{{ $gallery->url() }}/photos" method="POST" class="dropzone">
-		{{ csrf_field() }}
-	</form>
 @stop
 
 @section('javascript')

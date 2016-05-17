@@ -13,9 +13,10 @@ var elixir = require('laravel-elixir');
 
 elixir(function(mix) {
 	mix.copy('node_modules/sweetalert/dist/sweetalert.min.js', 'resources/assets/js/libs')
-       .copy('node_modules/sweetalert/dist/sweetalert.css', 'resources/assets/css/libs');
+     .copy('node_modules/sweetalert/dist/sweetalert.css', 'resources/assets/css/libs');
 
     mix.sass('app.scss', 'public/css/app.css')
+       .phpUnit()
        .styles([
 	      'libs/sweetalert.css',
 	      'libs/dropzone.css'
