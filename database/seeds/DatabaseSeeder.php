@@ -11,9 +11,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-    	factory(App\User::class, 1)->create()->each(function($u) {
+    	/*factory(App\User::class, 1)->create()->each(function($u) {
 	        $u->galleries()->save(factory(App\Gallery::class)->make());
-	    });
+	    });*/
+
+        $user = factory(App\User::class)->create([
+            'name' => 'Nick',
+            'email' => 'nick@example.com',
+            'password' => bcrypt('password'),
+            'role' => 'admin'
+        ]);
+
+        $user->galleries()->save(factory(App\Gallery::class)->make());
+
         // $this->call(UserTableSeeder::class);
         // $this->call(GalleryTableSeeder::class);
     }

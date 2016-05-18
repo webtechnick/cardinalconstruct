@@ -21,9 +21,9 @@
 				</div>
 			@endforeach
 
-			@if ($user && $user->owns($gallery))
+			@if ($user && $user->ownsOrIsAdmin($gallery))
 				<hr>
-				<form id="addPhotosForm" action="{{ route('store_photo_path', [$gallery->slug]) }}" method="POST" class="bluedashed dropzone">
+				<form id="addPhotosForm{{ $gallery->id }}" action="{{ route('store_photo_path', [$gallery->slug]) }}" method="POST" class="bluedashed dropzone">
 					{{ csrf_field() }}
 				</form>
 			@endif
@@ -34,7 +34,12 @@
 
 @section('javascript')
 	<script>
-		Dropzone.options.addPhotosForm = {
+		Dropzone.options.addPhotosForm{{ $gallery->id }} = {
+			init: function () {
+				this.on("queuecomplete", function(file) {
+					location.reload();
+				});
+			},
 			paramName: 'photo',
 			maxFileSize: 3,
 			acceptedFiles: '.jpg, .jpeg, .png, .gif'

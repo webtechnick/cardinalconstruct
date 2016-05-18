@@ -2,35 +2,50 @@
 
 namespace App\Http\Controllers;
 
-use App\Facades\Flash;
 use App\Gallery;
 use App\Http\Requests;
-use App\Http\Requests\ChangeGalleryRequest;
+use App\Http\Requests\AddPhotoRequest;
 use App\Http\Requests\GalleryRequest;
-use App\Photo;
 use Illuminate\Http\Request;
 
 class GalleriesController extends Controller
 {
 
-    public function __construct() {
+    /**
+     * require user to be logged in, exepct for show and index
+     */
+    public function __construct()
+    {
         $this->middleware('auth', ['except' => [
             'show',
             'index'
         ]]);
         parent::__construct();
     }
+
+    /**
+     * Index of the gallery
+     * @return View
+     */
     public function index()
     {
-        //Flash::success('This is a success message!');
         return view('galleries.index', ['galleries' => Gallery::all()]);
     }
 
+    /**
+     * Create view for
+     * @return View
+     */
     public function create()
     {
         return view('galleries.create');
     }
 
+    /**
+     * Create a new Gallery
+     * @param  GalleryRequest $request [description]
+     * @return redirect
+     */
     public function store(GalleryRequest $request)
     {
         $gallery = $this->user->addGallery(
@@ -42,6 +57,11 @@ class GalleriesController extends Controller
         return redirect($gallery->url());
     }
 
+    /**
+     * Show a gallery
+     * @param  string $slug
+     * @return View
+     */
     public function show($slug)
     {
         $gallery = Gallery::findBySlug($slug);
@@ -50,13 +70,5 @@ class GalleriesController extends Controller
             return redirect('/gallery');
         }
         return view('galleries.show', compact('gallery'));
-    }
-
-    public function addPhoto($slug, ChangeGalleryRequest $request)
-    {
-        $photo = Photo::fromFileUpload($request->file('photo'));
-        Gallery::findBySlug($slug)->addPhoto($photo);
-
-        return 'Done';
     }
 }

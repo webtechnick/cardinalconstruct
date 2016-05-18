@@ -27,10 +27,20 @@ class Photo extends Model
      */
     public function saveAs($filename)
     {
-    	$this->name = time() . '-' . $filename;
-    	$this->path = $this->baseDir() . $this->name;
-    	$this->thumbnail_path = $this->baseDir() . 'tn-' . $this->name;
-    	return $this;
+        $this->name = time() . '-' . $filename;
+        return $this;
+    }
+
+    /**
+     * Mutator, if name changes, also updated path and thumbnail_path
+     *
+     * @param string name
+     */
+    public function setNameAttribute($name)
+    {
+        $this->attributes['name'] = $name;
+        $this->path = $this->baseDir() . $name;
+        $this->thumbnail_path = $this->baseDir() . 'tn-' . $name;
     }
 
     /**
@@ -41,7 +51,7 @@ class Photo extends Model
      */
     public static function fromFileUpload(UploadedFile $file)
     {
-    	// Build the photo
+        // Build the photo
         $photo = (new static)->saveAs($file->getClientOriginalName());
         // Move the uploaded file
         $file->move($photo->baseDir(), $photo->name);
@@ -56,20 +66,21 @@ class Photo extends Model
      *
      * @return [type] [description]
      */
-    public function makeThumbnail()
+    public function makeThumbnail($size = 200)
     {
-    	Image::make($this->path)
-    		->fit(200)
-    		->save($this->thumbnail_path);
+        Image::make($this->path)
+            ->fit($size)
+            ->save($this->thumbnail_path);
 
-    	return $this;
+        return $this;
     }
 
     /**
      * Base directory path relative to /public
      * @return String path relative to public directory
      */
-  	public function baseDir() {
-  		return 'uploads/photos/';
-  	}
+    public function baseDir()
+    {
+        return 'uploads/photos/';
+    }
 }

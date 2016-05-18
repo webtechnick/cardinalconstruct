@@ -37,15 +37,28 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
-    public function galleries() {
+    public function galleries()
+    {
         return $this->hasMany(Gallery::class);
     }
 
-    public function owns($model) {
+    public function owns($model)
+    {
         return $this->id == $model->user_id;
     }
 
-    public function addGallery(Gallery $gallery) {
+    public function ownsOrIsAdmin($model)
+    {
+        return $this->isAdmin() || $this->owns($model);
+    }
+
+    public function addGallery(Gallery $gallery)
+    {
         return $this->galleries()->save($gallery);
+    }
+
+    public function isAdmin()
+    {
+        return $this->role == 'admin';
     }
 }

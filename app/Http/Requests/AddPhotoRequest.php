@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Gallery;
 use App\Http\Requests\Request;
 
-class ChangeGalleryRequest extends Request
+class AddPhotoRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,10 +14,18 @@ class ChangeGalleryRequest extends Request
      */
     public function authorize()
     {
-        return Gallery::where([
+        // If we aren't a user, return false
+        if (! $this->user()) {
+            return false;
+        }
+
+        // If we own this gallery
+        $userowned = Gallery::where([
             'slug' => $this->slug,
             'user_id' => $this->user()->id
         ])->exists();
+
+        return ($this->user()->isAdmin() || $userowned);
     }
 
     /**
