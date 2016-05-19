@@ -20,6 +20,9 @@ elixir(function(mix) {
      .copy('node_modules/jsonlylightbox/css/lightbox.css', 'resources/assets/css/libs');
 
   mix.copy('node_modules/bootstrap-sass/assets/fonts/bootstrap', 'public/fonts/bootstrap');
+  mix.copy('node_modules/bootstrap-sass/assets/javascripts/bootstrap.min.js', 'resources/assets/js/libs');
+
+  mix.copy('node_modules/jquery/dist/jquery.min.js', 'resources/assets/js/libs');
 
     mix.sass('app.scss', 'public/css/app.css')
        .phpUnit()
@@ -30,8 +33,10 @@ elixir(function(mix) {
         'libs/lightbox.css'
 	   ], 'public/css/libs.css')
        .scripts([
+        'libs/jquery.min.js',
+        'libs/bootstrap.min.js',
     	  'libs/sweetalert.min.js',
-    	  'libs/dropzone.js',
+        'libs/dropzone.js',
         //'libs/lity.js',
         'libs/lightbox.js'
        ], 'public/js/libs.js');

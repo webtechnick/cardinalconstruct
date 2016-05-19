@@ -10,4 +10,6 @@
 		@include('galleries._show')
 	@endforeach
 
+    {!! $galleries->links() !!}
+
 @stop

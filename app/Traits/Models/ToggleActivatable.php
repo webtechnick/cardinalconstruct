@@ -12,7 +12,7 @@ trait ToggleActivatable
      */
     public function isActive()
     {
-        return $this->is_active;
+        return !!$this->is_active;
     }
 
     /**

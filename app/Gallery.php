@@ -27,6 +27,15 @@ class Gallery extends Model
     }
 
     /**
+     * Gallery belongs to a User
+     * @return Relationship
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
      * Find a gallery by it's slug
      * @param  string $slug
      * @return Gallery
@@ -48,7 +57,7 @@ class Gallery extends Model
                 return;
             }
             $query->active();
-        }])->orderBy('created_at', 'desc')->get();
+        }])->orderBy('created_at', 'desc')->paginate(15);
     }
 
     /**
@@ -67,15 +76,6 @@ class Gallery extends Model
     public function addPhoto(Photo $photo)
     {
         return $this->photos()->save($photo);
-    }
-
-    /**
-     * Gallery belongs to a User
-     * @return Relationship
-     */
-    public function user()
-    {
-        return $this->belongsTo(User::class);
     }
 
     /**

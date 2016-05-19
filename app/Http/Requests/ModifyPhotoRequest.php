@@ -25,11 +25,7 @@ class ModifyPhotoRequest extends Request
             'user_id' => $this->user()->id
         ])->exists();
 
-        $result = ($this->user()->isAdmin() || $userowned);
-
-        dd($result);
-
-        return $result;
+        return ($this->user()->isAdmin() || $userowned);
     }
 
     /**

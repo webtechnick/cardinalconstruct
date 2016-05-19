@@ -2,7 +2,7 @@
 /**
  * Basic Pages
  */
-Route::get('/', 'PagesController@home');
+Route::get('/', ['as' => 'home', 'uses' => 'PagesController@home']);
 Route::get('/remodel', 'PagesController@remodel');
 Route::get('/marvin', 'PagesController@marvin');
 Route::get('/simonton', 'PagesController@simonton');
@@ -16,13 +16,13 @@ Route::auth();
 /**
  * Gallery
  */
-Route::get('gallery', 'GalleriesController@index');
-Route::get('gallery/create', 'GalleriesController@create');
+Route::get('gallery', ['as' => 'gallery.index', 'uses' => 'GalleriesController@index']);
+Route::get('gallery/create', ['as' => 'gallery.create', 'uses' => 'GalleriesController@create']);
 Route::delete('gallery/{slug}', ['as' => 'gallery.destroy', 'uses' => 'GalleriesController@destroy']);
 Route::get('gallery/{slug}/edit', ['as' => 'gallery.edit', 'uses' => 'GalleriesController@edit']);
-Route::get('gallery/{slug}', 'GalleriesController@show');
+Route::get('gallery/{slug}', ['as' => 'gallery.show', 'uses' => 'GalleriesController@show']);
 Route::patch('gallery/{slug}', ['as' => 'gallery.update', 'uses' => 'GalleriesController@update']);
-Route::post('gallery', 'GalleriesController@store');
+Route::post('gallery', ['as' => 'gallery.store', 'uses' => 'GalleriesController@store']);
 
 
 
