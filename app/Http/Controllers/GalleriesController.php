@@ -29,7 +29,7 @@ class GalleriesController extends Controller
      */
     public function index()
     {
-        return view('galleries.index', ['galleries' => Gallery::all()]);
+        return view('galleries.index', ['galleries' => Gallery::findAllSorted()]);
     }
 
     /**
@@ -58,6 +58,33 @@ class GalleriesController extends Controller
     }
 
     /**
+     * Edit view for a gallery
+     * @param  [type] $slug [description]
+     * @return [type]       [description]
+     */
+    public function edit($slug)
+    {
+        $gallery = Gallery::findBySlug($slug);
+        return view('galleries.edit', compact('gallery'));
+    }
+
+    /**
+     * Update a gallery
+     * @return [type] [description]
+     */
+    public function update($slug, GalleryRequest $request)
+    {
+        $gallery = Gallery::findBySlug($slug);
+        if (empty($gallery)) {
+            flash()->error('No Gallery Found');
+        }
+        $gallery->update($request->all());
+        flash()->success('Gallery Updated!');
+
+        return redirect($gallery->url());
+    }
+
+    /**
      * Show a gallery
      * @param  string $slug
      * @return View
@@ -70,5 +97,18 @@ class GalleriesController extends Controller
             return redirect('/gallery');
         }
         return view('galleries.show', compact('gallery'));
+    }
+
+    public function destroy($slug, GalleryRequest $request)
+    {
+        $gallery = Gallery::findBySlug($slug);
+        if (empty($gallery)) {
+            flash()->error('Unable to find gallery.');
+            return back();
+        }
+
+        $blah = $gallery->delete();
+        flash()->success('Gallery Deleted.');
+        return back();
     }
 }

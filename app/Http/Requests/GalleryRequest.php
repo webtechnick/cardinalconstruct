@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Gallery;
 use App\Http\Requests\Request;
 
 class GalleryRequest extends Request
@@ -13,7 +14,20 @@ class GalleryRequest extends Request
      */
     public function authorize()
     {
-        return true;
+        // If we aren't a user, return false
+        if (! $this->user()) {
+            return false;
+        }
+
+        //dd($this->slug);
+
+        // If we own this gallery
+        $userowned = Gallery::where([
+            'slug' => $this->slug,
+            'user_id' => $this->user()->id
+        ])->exists();
+
+        return ($this->user()->isAdmin() || $userowned);
     }
 
     /**
@@ -23,6 +37,10 @@ class GalleryRequest extends Request
      */
     public function rules()
     {
+        // Don't need validation if we're trying to delete
+        if ($this->method == 'DELETE') {
+            return [];
+        }
         return [
             'title' => 'required',
             'body' => 'required'

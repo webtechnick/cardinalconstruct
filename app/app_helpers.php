@@ -7,3 +7,7 @@ function flash($title = null, $message = null) {
 	}
 	return $flash->info($message, ['title' => $title]);
 }
+
+function delete_link($text, $path) {
+
+}

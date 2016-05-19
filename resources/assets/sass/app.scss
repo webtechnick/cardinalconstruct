@@ -7,3 +7,29 @@ form.bluedashed {
 	border-style: dashed;
 	border-color: #00ADFF;
 }
+
+.glyphicon-lg {
+    // color: red;
+    font-size: 30px;
+}
+
+.hand {
+    cursor: pointer;
+}
+
+.photo-bucket {
+    .admin-box {
+        display: none;
+        position: absolute;
+        top: -10px;
+        left: 195px;
+        z-index: 1000;
+    }
+    &:hover .admin-box {
+        display: block;
+    }
+
+    img.disabled {
+        opacity: 0.4;
+    }
+}

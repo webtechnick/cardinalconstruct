@@ -6021,4 +6021,23 @@ form.bluedashed {
   border-style: dashed;
   border-color: #00ADFF; }
 
+.glyphicon-lg {
+  font-size: 30px; }
+
+.hand {
+  cursor: pointer; }
+
+.photo-bucket .admin-box {
+  display: none;
+  position: absolute;
+  top: -10px;
+  left: 195px;
+  z-index: 1000; }
+
+.photo-bucket:hover .admin-box {
+  display: block; }
+
+.photo-bucket img.disabled {
+  opacity: 0.4; }
+
 /*# sourceMappingURL=app.css.map */

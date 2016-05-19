@@ -2,12 +2,17 @@
 
 namespace App;
 
+use App\Libs\Thumbnail;
+use App\Traits\Models\ToggleActivatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 
 class Photo extends Model
 {
+    use ToggleActivatable;
+
     protected $fillable = ['name', 'thumbnail_path', 'path','is_active'];
 
     /**
@@ -68,9 +73,7 @@ class Photo extends Model
      */
     public function makeThumbnail($size = 200)
     {
-        Image::make($this->path)
-            ->fit($size)
-            ->save($this->thumbnail_path);
+        (new Thumbnail($this->path, $this->thumbnail_path, $size))->save();
 
         return $this;
     }
@@ -82,5 +85,26 @@ class Photo extends Model
     public function baseDir()
     {
         return 'uploads/photos/';
+    }
+
+    /**
+     * When deleting the record, also delete the files off the file system
+     * @return Photo self
+     */
+    public function delete()
+    {
+        File::delete([
+            $this->path,
+            $this->thumbnail_path
+        ]);
+        return parent::delete();
+    }
+
+    public function disabled()
+    {
+        if ($this->isActive()) {
+            return '';
+        }
+        return 'disabled';
     }
 }

@@ -22,4 +22,10 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
 
         return $app;
     }
+
+    // public function assertContains($haystack, $needle)
+    // {
+    //     $result = str_pos($haystack, $needle);
+    //     $this->assertTrue(!!$result);
+    // }
 }

@@ -31,6 +31,18 @@ $factory->define(App\Gallery::class, function (Faker\Generator $faker) {
     ];
 });
 
+$factory->define(App\Photo::class, function (Faker\Generator $faker) {
+    $name = str_random(10) . '.jpg';
+    return [
+        // 'gallery_id' => factory(App\Gallery::class)->create()->id,
+        'gallery_id' => $faker->numberBetween(1,10),
+        'name' => $name,
+        'path' => 'uploads/photos/' . $name,
+        'thumbnail_path' => 'uploads/photos/tn-' . $name,
+        'is_active' => true,
+    ];
+});
+
 $factory->define(App\Post::class, function (Faker\Generator $faker) {
     return [
         'title' => $faker->sentence,
