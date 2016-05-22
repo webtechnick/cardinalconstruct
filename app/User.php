@@ -18,6 +18,12 @@ class User extends Authenticatable
         'name', 'email', 'password',
     ];
 
+    protected $roles = [
+        'user', // Default
+        'admin', // Full admin rights
+        'worker' // Can upload photos, but not approve them
+    ];
+
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -52,6 +58,10 @@ class User extends Authenticatable
         return $this->isAdmin() || $this->owns($model);
     }
 
+    public function ownsOrIsAdminOrWorker($model) {
+        return $this->isWorker() || $this->ownsOrIsAdmin($model);
+    }
+
     public function addGallery(Gallery $gallery)
     {
         return $this->galleries()->save($gallery);
@@ -60,5 +70,26 @@ class User extends Authenticatable
     public function isAdmin()
     {
         return $this->role == 'admin';
+    }
+
+    /**
+     * Is the current user a worker
+     * @return boolean [description]
+     */
+    public function isWorker()
+    {
+        return $this->role == 'worker';
+    }
+
+    /**
+     * Set the role of the user if we allow that role
+     * @param string $role [description]
+     */
+    public function setRole($role = 'user')
+    {
+        if (in_array($role, $this->roles)) {
+            $this->role = $role;
+        }
+        return $this;
     }
 }

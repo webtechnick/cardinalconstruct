@@ -24,7 +24,9 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(Router $router)
     {
-        //
+        $router->bind('slug', function($slug) {
+            return \App\Gallery::findBySlug($slug);
+        });
 
         parent::boot($router);
     }

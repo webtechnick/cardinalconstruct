@@ -25,7 +25,11 @@ class AddPhotoRequest extends Request
             'user_id' => $this->user()->id
         ])->exists();
 
-        return ($this->user()->isAdmin() || $userowned);
+        $isAdmin = $this->user()->isAdmin();
+
+        $isWorker = $this->user()->isWorker();
+
+        return ($isAdmin || $isWorker || $userowned);
     }
 
     /**

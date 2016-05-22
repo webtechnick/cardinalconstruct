@@ -30,7 +30,7 @@ Route::post('gallery', ['as' => 'gallery.store', 'uses' => 'GalleriesController@
  * Photos
  */
 Route::post('gallery/{slug}/photos', [
-	'as' => 'store_photo_path',
+	'as' => 'photos.store',
 	'uses' => 'PhotosController@store'
 ]);
 Route::delete('photos/{photo}', 'PhotosController@destroy');

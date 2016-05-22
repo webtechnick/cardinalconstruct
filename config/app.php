@@ -157,6 +157,9 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\FlashServiceProvider::class,
 
+        /** Ckediitor */
+        Unisharp\Ckeditor\ServiceProvider::class,
+
         /**
          * Image Service
          */

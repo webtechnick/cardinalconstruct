@@ -8,20 +8,24 @@ use App\Http\Requests\AddPhotoRequest;
 use App\Http\Requests\ModifyPhotoRequest;
 use App\Photo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PhotosController extends Controller
 {
     /**
      * Add a photo to the gallery
      * this is an ajax request.
-     * @param string          $slug
+     * @param Gallery $gallery
      * @param AddPhotoRequest $request
      * @return  string done
      */
-    public function store($slug, AddPhotoRequest $request)
+    public function store(Gallery $gallery, AddPhotoRequest $request)
     {
         $photo = Photo::fromFileUpload($request->file('photo'));
-        Gallery::findBySlug($slug)->addPhoto($photo);
+        if (! Auth::user()->isAdmin() ) { //If user is not admin, upload as deactivated.
+            $photo->deactivate();
+        }
+        $gallery->addPhoto($photo);
 
         return 'Done';
     }

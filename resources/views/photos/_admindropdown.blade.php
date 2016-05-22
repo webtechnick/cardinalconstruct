@@ -1,4 +1,4 @@
-@if ($photo->isActive() || $signedIn && $user->isAdmin())
+@if ($signedIn && $user->isAdmin())
     <div class="dropdown admin-box">
       <span class="glyphicon-lg hand glyphicon glyphicon-cog" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></span>
       <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">

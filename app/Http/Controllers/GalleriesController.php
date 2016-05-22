@@ -62,19 +62,23 @@ class GalleriesController extends Controller
      * @param  [type] $slug [description]
      * @return [type]       [description]
      */
-    public function edit($slug)
+    public function edit(Gallery $gallery)
     {
-        $gallery = Gallery::findBySlug($slug);
+        if (empty($gallery)) {
+            flash()->error('No gallery found.');
+            return back();
+        }
         return view('galleries.edit', compact('gallery'));
     }
 
     /**
      * Update a gallery
+     * @param  Gallery $gallery
+     * @param  GalleryRequest $request
      * @return [type] [description]
      */
-    public function update($slug, GalleryRequest $request)
+    public function update(Gallery $gallery, GalleryRequest $request)
     {
-        $gallery = Gallery::findBySlug($slug);
         if (empty($gallery)) {
             flash()->error('No Gallery Found');
         }
@@ -86,12 +90,11 @@ class GalleriesController extends Controller
 
     /**
      * Show a gallery
-     * @param  string $slug
+     * @param  Gallery $gallery
      * @return View
      */
-    public function show($slug)
+    public function show(Gallery $gallery)
     {
-        $gallery = Gallery::findBySlug($slug);
         if (empty($gallery)) {
             flash()->error('Gallery not found.');
             return redirect('/gallery');
@@ -99,15 +102,20 @@ class GalleriesController extends Controller
         return view('galleries.show', compact('gallery'));
     }
 
-    public function destroy($slug, GalleryRequest $request)
+    /**
+     * Destroy the gallery and it's photos.
+     * @param  Gallery        $gallery [description]
+     * @param  GalleryRequest $request [description]
+     * @return redirect back
+     */
+    public function destroy(Gallery $gallery, GalleryRequest $request)
     {
-        $gallery = Gallery::findBySlug($slug);
         if (empty($gallery)) {
             flash()->error('Unable to find gallery.');
             return back();
         }
 
-        $blah = $gallery->delete();
+        $gallery->delete();
         flash()->success('Gallery Deleted.');
         return back();
     }

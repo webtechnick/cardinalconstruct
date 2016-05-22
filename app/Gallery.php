@@ -52,9 +52,11 @@ class Gallery extends Model
     public static function findAllSorted()
     {
         return self::with(['photos' => function ($query) {
-            // Only add constrait if we're not logged in
-            if (Auth::check() && Auth::user()->isAdmin()) {
-                return;
+            // Only add constrait if we're not admin or worker
+            if (Auth::check()) {
+                if (Auth::user()->isAdmin() || Auth::user()->isWorker()) {
+                    return;
+                }
             }
             $query->active();
         }])->orderBy('created_at', 'desc')->paginate(15);

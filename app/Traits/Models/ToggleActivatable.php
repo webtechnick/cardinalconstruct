@@ -22,12 +22,32 @@ trait ToggleActivatable
     public function toggleActive()
     {
         if ($this->isActive()) {
-            $this->is_active = false;
+            $this->deactivate();
             return $this->save();
         } else {
-            $this->is_active = true;
+            $this->activate();
             return $this->save();
         }
+    }
+
+    /**
+     * activate the record, without saving it.
+     * @return self
+     */
+    public function activate()
+    {
+        $this->is_active = true;
+        return $this;
+    }
+
+    /**
+     * deactivate the record without saving it.
+     * @return self
+     */
+    public function deactivate()
+    {
+        $this->is_active = false;
+        return $this;
     }
 
     /**
