@@ -31,7 +31,6 @@
 			</form>
 
 			@section('javascript')
-				@parent
 				<script>
 					Dropzone.options.addPhotosForm{{ $gallery->id }} = {
 						init: function () {
@@ -44,7 +43,7 @@
 						acceptedFiles: '.jpg, .jpeg, .png, .gif'
 					}
 				</script>
-			@stop
+			@endsection
 		@endif
 	</div>
 </div>

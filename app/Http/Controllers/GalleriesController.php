@@ -7,6 +7,7 @@ use App\Http\Requests;
 use App\Http\Requests\AddPhotoRequest;
 use App\Http\Requests\GalleryRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GalleriesController extends Controller
 {
@@ -20,7 +21,6 @@ class GalleriesController extends Controller
             'show',
             'index'
         ]]);
-        parent::__construct();
     }
 
     /**
@@ -48,7 +48,7 @@ class GalleriesController extends Controller
      */
     public function store(GalleryRequest $request)
     {
-        $gallery = $this->user->addGallery(
+        $gallery = Auth::user()->addGallery(
             new Gallery($request->all())
         );
 

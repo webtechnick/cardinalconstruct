@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Unit;
+
 use App\Libs\Thumbnail;
 use App\Photo;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -7,11 +9,12 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\UploadedFile;
 use Intervention\Image\Facades\Image;
+use Tests\TestCase;
 use Mockery as m;
 
 class PhotoTest extends TestCase
 {
-    use DatabaseTransactions;
+    use DatabaseMigrations;
 
     /** @test */
     public function it_should_be_created_from_fileupload()
@@ -53,7 +56,7 @@ class PhotoTest extends TestCase
 
     /** @test */
     public function it_should_toggle_active() {
-        $photo = factory(App\Photo::class)->create();
+        $photo = factory(Photo::class)->create();
 
         $this->assertTrue($photo->isActive());
         $photo->toggleActive();

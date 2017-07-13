@@ -1,15 +1,18 @@
 <?php
 
+namespace Tests\Unit;
+
 use App\Gallery;
 use App\Photo;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Tests\TestCase;
 
 class GalleryTest extends TestCase
 {
-    use DatabaseTransactions;
+    use DatabaseMigrations;
 
     /** @test  */
     public function it_should_delete_photos_when_deleted()

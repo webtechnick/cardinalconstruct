@@ -18,4 +18,4 @@
 
     {!! $galleries->links() !!}
 
-@stop
+@endsection

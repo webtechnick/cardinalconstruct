@@ -6,6 +6,8 @@
 
 	<hr>
 
+    @include('utils._errors')
+
     <form action="/contact" method="POST">
         {{ csrf_field() }}
         <div class="row">

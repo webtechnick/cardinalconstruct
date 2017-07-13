@@ -16,9 +16,8 @@
 </div>
 
 @section('javascript')
-    @parent
     <script src="/vendor/unisharp/laravel-ckeditor/ckeditor.js"></script>
     <script type="text/javascript">
         CKEDITOR.replace( 'Body' );
     </script>
-@stop
+@endsection
