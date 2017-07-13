@@ -31,4 +31,20 @@ class PagesController extends Controller
     {
     	return view('pages.contact');
     }
+
+    public function send(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required',
+            'email' => 'required|email',
+            'phone' => 'required',
+            'type' => 'required',
+            'body' => 'required',
+        ]);
+
+        //Mail::to(config('mail.from.address'))
+        //
+        flash()->success('Request sent, you will hear from one of our represenatives soon.');
+        return redirect()->route('home');
+    }
 }

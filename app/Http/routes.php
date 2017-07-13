@@ -7,6 +7,7 @@ Route::get('/remodel', 'PagesController@remodel');
 Route::get('/marvin', 'PagesController@marvin');
 Route::get('/simonton', 'PagesController@simonton');
 Route::get('/contact', 'PagesController@contact');
+Route::post('/contact', 'PagesController@send');
 
 /**
  * Auth
