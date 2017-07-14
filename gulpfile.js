@@ -1,5 +1,7 @@
 var elixir = require('laravel-elixir');
 
+// require('laravel-elixir-vue-2');
+
 /*
  |--------------------------------------------------------------------------
  | Elixir Asset Management
@@ -24,20 +26,20 @@ elixir(function(mix) {
 
   mix.copy('node_modules/jquery/dist/jquery.js', 'resources/assets/js/libs');
 
-    mix.sass('app.scss', 'public/css/app.css')
-       .styles([
-	      'libs/sweetalert.css',
-	      'libs/dropzone.css',
-        //'libs/lity.css',
-        'libs/lightbox.css'
-	   ], 'public/css/libs.css')
-       .scripts([
-        'libs/jquery.js',
-        'libs/bootstrap.js',
-    	  'libs/sweetalert.min.js',
-        'libs/dropzone.js',
-        //'libs/lity.js',
-        'libs/lightbox.js'
-       ], 'public/js/libs.js')
-       .phpUnit();
+  mix.sass('app.scss', 'public/css/app.css')
+     .styles([
+      'libs/sweetalert.css',
+      'libs/dropzone.css',
+      //'libs/lity.css',
+      'libs/lightbox.css'
+   ], 'public/css/libs.css')
+     .scripts([
+      'libs/jquery.js',
+      'libs/bootstrap.js',
+  	  'libs/sweetalert.min.js',
+      'libs/dropzone.js',
+      //'libs/lity.js',
+      'libs/lightbox.js'
+     ], 'public/js/libs.js')
+     .phpUnit();
 });
