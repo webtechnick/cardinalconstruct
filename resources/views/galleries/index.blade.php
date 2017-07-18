@@ -2,7 +2,7 @@
 
 @section('content')
 
-    @if ($signedIn && $user->isAdmin())
+    @if ($signedIn AND $user->isAdmin())
         <a href="/gallery/create" class="pull-right btn btn-primary p10 mt10">Create Gallery</a>
     @endif
 

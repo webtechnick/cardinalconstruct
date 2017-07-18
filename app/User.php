@@ -5,6 +5,7 @@ namespace App;
 use App\Comment;
 use App\Gallery;
 use App\Post;
+use App\Review;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -32,6 +33,15 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * A user has many reviews
+     * @return [type] [description]
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 
     public function posts()
     {

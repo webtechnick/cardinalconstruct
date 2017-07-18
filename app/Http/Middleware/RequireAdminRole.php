@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Auth;
 
 class RequireAdminRole
 {
@@ -15,8 +16,8 @@ class RequireAdminRole
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::guest() || Auth::user('role') != 'admin') {
-            flash('Admin access is required.');
+        if (Auth::guest() || !Auth::user()->isAdmin()) {
+            flash()->error('Admin access is required.');
             return redirect('/');
         }
         return $next($request);

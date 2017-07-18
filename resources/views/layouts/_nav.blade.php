@@ -19,16 +19,17 @@
         <div class="collapse navbar-collapse" id="app-navbar-collapse">
             <!-- Left Side Of Navbar -->
             <ul class="nav navbar-nav">
-                <li><a href="{{ url('/marvin') }}">Marvin</a></li>
-                <li><a href="{{ url('/simonton') }}">Simonton</a></li>
-                <li><a href="{{ url('/remodel') }}">Remodel</a></li>
-                <!-- <li><a href="{{ url('/blog') }}">Blog</a></li> -->
                 <li><a href="{{ url('/gallery') }}">Gallery</a></li>
+                <li><a href="{{ url('/simonton') }}">Simonton</a></li>
+                <li><a href="{{ url('/dycwindows') }}">DYC Windows</a></li>
+                <li><a href="{{ url('/reviews') }}">Reviews</a></li>
+                <li><a href="{{ url('/about') }}">About Us</a></li>
+                <!-- <li><a href="{{ url('/blog') }}">Blog</a></li> -->
             </ul>
 
             <!-- Right Side Of Navbar -->
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="{{ url('/contact') }}">Contact</a></li>
+                <li><a href="{{ url('/contact') }}">Contact/Quote</a></li>
                 <!-- Authentication Links -->
                 @if (Auth::guest())
                     <li><a href="{{ url('/login') }}">Login</a></li>
@@ -38,8 +39,10 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                             {{ Auth::user()->name }} <span class="caret"></span>
                         </a>
-
                         <ul class="dropdown-menu" role="menu">
+                            @if ($user->isAdmin())
+                            <li><a href="/admin">Admin</a></li>
+                            @endif
                             <li>
                                 <a href="{{ url('/logout') }}"
                                     onclick="event.preventDefault();

@@ -41,5 +41,6 @@ elixir(function(mix) {
       //'libs/lity.js',
       'libs/lightbox.js'
      ], 'public/js/libs.js')
+     .webpack('app.js')
      .phpUnit();
 });

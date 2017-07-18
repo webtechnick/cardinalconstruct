@@ -43,6 +43,17 @@ $factory->define(App\Photo::class, function (Faker\Generator $faker) {
     ];
 });
 
+$factory->define(App\Review::class, function (Faker\Generator $faker) {
+    return [
+        'user_id' => null,
+        'name' => $faker->name,
+        'body' => $faker->paragraphs(1, true),
+        'rating' => $faker->numberBetween(1,5),
+        'response' => null,
+        'is_active' => false,
+    ];
+});
+
 $factory->define(App\Post::class, function (Faker\Generator $faker) {
     return [
         'title' => $faker->sentence,
