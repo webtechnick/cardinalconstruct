@@ -42,7 +42,7 @@ class ReviewsController extends Controller
         $review->update($request->all());
         flash()->success('Review Updated.');
 
-        return back();
+        return redirect()->route('admin.reviews.index');
     }
 
     public function approve(Review $review)

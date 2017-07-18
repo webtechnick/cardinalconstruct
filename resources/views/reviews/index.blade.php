@@ -66,9 +66,8 @@
             </div>
             @if ($signedIn AND $user->isAdmin())
             <div class="panel-footer">
-                <a href="#" class="btn btn-xs btn-info">Edit</a>
-                <a href="#" class="btn btn-xs btn-danger">Delete</a>
-                <a href="#" class="btn btn-xs btn-success">Approve</a>
+                <a href="{{ route('admin.reviews.edit', $review) }}" class="btn btn-xs btn-info">Edit</a>
+                <a href="{{ route('admin.reviews.deny', $review) }}" class="confirm btn btn-xs btn-danger">Deny</a>
             </div>
             @endif
         </div>

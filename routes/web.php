@@ -8,14 +8,16 @@ Route::group([
     'namespace' => 'Admin',
 ], function() {
     // Users
-    Route::get('/', 'UsersController@index')->name('users');
+    Route::get('/', 'UsersController@index')->name('users.index');
     Route::get('/users/create', 'UsersController@create')->name('users.create');
     Route::post('/users', 'UsersController@store')->name('users.store');
     Route::get('/users/edit/{user}', 'UsersController@edit')->name('users.edit');
     Route::patch('/users/{user}', 'UsersController@update')->name('users.update');
     Route::get('/users/delete/{user}', 'UsersController@destroy')->name('users.delete');
     // Reviews
-    Route::get('/reviews', 'ReviewsController@index')->name('reviews');
+    Route::get('/reviews', 'ReviewsController@index')->name('reviews.index');
+    Route::get('/reviews/edit/{review}', 'ReviewsController@edit')->name('reviews.edit');
+    Route::patch('/reviews/{review}', 'ReviewsController@update')->name('reviews.update');
     Route::get('/reviews/approve/{review}', 'ReviewsController@approve')->name('reviews.approve');
     Route::get('/reviews/deny/{review}', 'ReviewsController@deny')->name('reviews.deny');
     Route::get('/reviews/delete/{review}', 'ReviewsController@destroy')->name('reviews.delete');

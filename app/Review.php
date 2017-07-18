@@ -11,7 +11,7 @@ class Review extends Model
 {
     use ToggleActivatable;
 
-    protected $fillable = ['name', 'body', 'rating'];
+    protected $fillable = ['name', 'body', 'rating', 'response'];
 
     protected $casts = [
         'is_active' => 'boolean'
