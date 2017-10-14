@@ -40,9 +40,6 @@
                             {{ Auth::user()->name }} <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            @if ($user->isAdmin())
-                            <li><a href="/admin">Admin</a></li>
-                            @endif
                             <li>
                                 <a href="{{ url('/logout') }}"
                                     onclick="event.preventDefault();
@@ -54,6 +51,11 @@
                                     {{ csrf_field() }}
                                 </form>
                             </li>
+                            @if ($user->isAdmin())
+                                <li class="divider"></li>
+                                <li><a href="/admin">Admin</a></li>
+                                <li><a href="/admin/reviews">Reviews</a></li>
+                            @endif
                         </ul>
                     </li>
                 @endif

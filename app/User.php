@@ -16,13 +16,13 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'role',
     ];
 
-    protected $roles = [
-        'user', // Default
-        'admin', // Full admin rights
-        'worker' // Can upload photos, but not approve them
+    public static $roles = [
+        'user' => 'user', // Default
+        'admin' => 'admin', // Full admin rights
+        'worker' => 'worker' // Can upload photos, but not approve them
     ];
 
     /**
@@ -97,7 +97,7 @@ class User extends Authenticatable
      */
     public function setRole($role = 'user')
     {
-        if (in_array($role, $this->roles)) {
+        if (in_array($role, self::$roles)) {
             $this->role = $role;
         }
         return $this;
