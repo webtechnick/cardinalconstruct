@@ -23,7 +23,7 @@ class CreatePhotosTable extends Migration
             $table->string('thumbnail_path'); // path to thumbnail
             $table->timestamps();
 
-            $table->foreign('gallery_id')->references('id')->on('galleries')->onDelete('cascade');
+            // $table->foreign('gallery_id')->references('id')->on('galleries')->onDelete('cascade');
         });
     }
 
