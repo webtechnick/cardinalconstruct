@@ -17,6 +17,11 @@ class PagesController extends Controller
     	return view('pages.remodel');
     }
 
+    public function dycwindows()
+    {
+        return view('pages.dycwindows');
+    }
+
     public function marvin()
     {
     	return view('pages.marvin');
@@ -25,6 +30,11 @@ class PagesController extends Controller
     public function simonton()
     {
     	return view('pages.simonton');
+    }
+
+    public function about()
+    {
+        return view('pages.about');
     }
 
     public function contact()

@@ -31,8 +31,8 @@ Route::get('/', ['as' => 'home', 'uses' => 'PagesController@home']);
 Route::get('/simonton', 'PagesController@simonton');
 Route::get('/dycwindows', 'PagesController@dycwindows');
 Route::get('/contact', 'PagesController@contact');
+Route::get('/about', 'PagesController@about');
 Route::post('/contact', 'PagesController@send');
-Route::post('/about', 'PagesController@about');
 
 
 // Aut

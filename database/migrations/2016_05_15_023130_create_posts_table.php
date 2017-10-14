@@ -19,7 +19,7 @@ class CreatePostsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('title');
             $table->string('slug')->index();
-            $table->date('publish_date')->index()->default(DB::raw('CURRENT_DATE'));
+            $table->date('publish_date')->index()->useCurrent = true;
             $table->boolean('is_active')->index()->default(true);
             $table->text('body');
             $table->timestamps();
