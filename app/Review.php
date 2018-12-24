@@ -35,7 +35,7 @@ class Review extends Model
      */
     public static function averageRating()
     {
-        return self::active()->select('rating')->avg('rating');
+        return round(self::active()->select('rating')->avg('rating'), 2);
     }
 
     /**

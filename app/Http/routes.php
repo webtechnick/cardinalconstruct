@@ -3,10 +3,10 @@
  * Basic Pages
  */
 Route::get('/', ['as' => 'home', 'uses' => 'PagesController@home']);
-Route::get('/remodel', 'PagesController@remodel');
-Route::get('/marvin', 'PagesController@marvin');
-Route::get('/simonton', 'PagesController@simonton');
-Route::get('/contact', 'PagesController@contact');
+Route::get('/remodel', 'PagesController@remodel')->name('remodel');
+Route::get('/marvin', 'PagesController@marvin')->name('marvin');
+Route::get('/simonton', 'PagesController@simonton')->name('simonton');
+Route::get('/contact', 'PagesController@contact')->name('contact');
 Route::post('/contact', 'PagesController@send');
 
 /**

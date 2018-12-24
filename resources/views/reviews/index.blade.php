@@ -36,9 +36,7 @@
         {{ Form::close() }}
     </div>
 
-    <h1>Reviews</h1>
-
-    <p>{{ $averageRating }} Rating</p>
+    <h1>Reviews <small>{{ $averageRating }} Average Rating</small></h1>
 
     <hr>
 

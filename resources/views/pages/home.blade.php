@@ -13,7 +13,6 @@
                 </div>
                 <div class="panel-body text-right">
                     <p>Phone: (505) 268-2738</p>
-                    <p>Fax: (505) 268-2777</p>
 
                     <p>Email: <a href="mailto:Cardinalinc505@aol.com">Cardinalinc505@aol.com</a></p>
                 </div>
