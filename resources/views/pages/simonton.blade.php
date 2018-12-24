@@ -26,5 +26,5 @@
 
     <p>Secondly, SpectraClear glass is now availible through Simonton. This glass option has three LowE coatings (LowE-366), Argon gas fill, and NEAT coating to give the very best glass performance. The extra coating of LowE increases energy effeciency with only minimal difference in visible light transmittance. The NEAT coating is a Titanium Dioxide (TiO2) coating applied to the outside surface of the glass, creating a smoother surface once activated by UV light. This allows water to sheet off the glass instead of bead, and also helps to decompose many glass contaminates, helping the glass stay cleaner longer! NEAT is also completely clear, so no alteration is made to the color, light transmittance, or performance of the glass.</p>
 
-    <p>There are many other reasons why we use Simonton as our primary replacement window for vinyl replacements. Call today for a free estimate, or stop by our showroom to see a variety of Simonton windows!</p>
+    <p>There are many other reasons why we use Simonton as our primary replacement window for vinyl replacements. Call today for a free estimate.</p>
 @endsection
