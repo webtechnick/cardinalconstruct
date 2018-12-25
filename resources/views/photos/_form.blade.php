@@ -2,7 +2,7 @@
 
 <div class="form-group">
 	<label for="body">Caption: </label>
-    {{ Form::textarea('caption', null, ['id' => 'Caption', 'class' => 'form-control', 'rows' => 10]) }}
+    {{ Form::textarea('caption', null, ['id' => 'Caption', 'class' => 'form-control', 'rows' => 5]) }}
 </div>
 <div class="checkbox">
     <label>
