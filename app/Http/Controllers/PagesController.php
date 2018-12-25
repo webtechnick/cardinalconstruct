@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests;
+use App\Mail\ContactUs;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class PagesController extends Controller
 {
@@ -52,8 +54,8 @@ class PagesController extends Controller
             'body' => 'required',
         ]);
 
-        //Mail::to(config('mail.from.address'))
-        //
+        Mail::send(new ContactUs($request->all()));
+
         flash()->success('Request sent, you will hear from one of our represenatives soon.');
         return redirect()->route('home');
     }
