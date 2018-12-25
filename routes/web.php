@@ -1,6 +1,4 @@
 <?php
-
-
 Route::group([
     'middleware' => ['auth', 'admin'],
     'as' => 'admin.',
@@ -28,11 +26,11 @@ Route::group([
  * Basic Pages
  */
 Route::get('/', ['as' => 'home', 'uses' => 'PagesController@home']);
-Route::get('/simonton', 'PagesController@simonton');
-Route::get('/dycwindows', 'PagesController@dycwindows');
-Route::get('/contact', 'PagesController@contact');
-Route::get('/about', 'PagesController@about');
-Route::post('/contact', 'PagesController@send');
+Route::get('/simonton', 'PagesController@simonton')->name('simonton');
+Route::get('/dycwindows', 'PagesController@dycwindows')->name('dycwindows');
+Route::get('/contact', 'PagesController@contact')->name('contact');
+Route::get('/about', 'PagesController@about')->name('about');
+Route::post('/contact', 'PagesController@send')->name('quote');
 
 
 // Aut
@@ -62,5 +60,7 @@ Route::post('gallery/{slug}/photos', [
     'as' => 'photos.store',
     'uses' => 'PhotosController@store'
 ]);
-Route::delete('photos/{photo}', 'PhotosController@destroy');
-Route::get('photos/{photo}/toggle', 'PhotosController@toggle');
+Route::delete('photos/{photo}', ['as' => 'photos.delete', 'uses' => 'PhotosController@destroy']);
+Route::get('photos/{photo}/toggle', ['as' => 'photos.toggle', 'uses' => 'PhotosController@toggle']);
+Route::get('photos/{photo}/edit', ['as' => 'photos.edit', 'uses' => 'PhotosController@edit']);
+Route::patch('photos/{photo}', ['as' => 'photos.update', 'uses' => 'PhotosController@update']);

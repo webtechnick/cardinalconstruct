@@ -15,7 +15,11 @@ return [
 
     'env' => env('APP_ENV', 'production'),
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Cardinal Construction'),
+
+    'phone' => env('CONTACT_PHONE', '(505) 268-2738'),
+
+    'email' => env('CONTACT_EMAIL', 'Cardinalinc505@aol.com'),
 
     /*
     |--------------------------------------------------------------------------

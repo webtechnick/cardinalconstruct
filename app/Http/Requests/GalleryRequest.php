@@ -19,8 +19,6 @@ class GalleryRequest extends Request
             return false;
         }
 
-        //dd($this->slug);
-
         // If we own this gallery
         $userowned = Gallery::where([
             'slug' => $this->slug,

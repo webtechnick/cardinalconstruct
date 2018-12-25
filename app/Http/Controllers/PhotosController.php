@@ -31,6 +31,36 @@ class PhotosController extends Controller
     }
 
     /**
+     * Add photo caption
+     *
+     * @param  Photo  $photo [description]
+     * @return [type]        [description]
+     */
+    public function edit(Photo $photo)
+    {
+        return view('photos.edit', compact('photo'));
+    }
+
+    /**
+     * [update description]
+     * @param  Photo              $photo   [description]
+     * @param  ModifyPhotoRequest $request [description]
+     * @return [type]                      [description]
+     */
+    public function update(Photo $photo, ModifyPhotoRequest $request)
+    {
+        if (empty($photo)) {
+            flash()->error('No photo found.');
+            return back();
+        }
+
+        $photo->update($request->all());
+        flash()->success('Photo updated!');
+
+        return redirect($photo->gallery->url());
+    }
+
+    /**
      * Delete the photo
      * @param  Photo  $photo [description]
      * @return redirect
@@ -43,6 +73,13 @@ class PhotosController extends Controller
         return back();
     }
 
+    /**
+     * Toggle the photo
+     *
+     * @param  Photo              $photo   [description]
+     * @param  ModifyPhotoRequest $request [description]
+     * @return [type]                      [description]
+     */
     public function toggle(Photo $photo, ModifyPhotoRequest $request) {
         $photo->toggleActive();
 

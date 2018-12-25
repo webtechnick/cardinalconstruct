@@ -10,6 +10,9 @@
             @endif
         </li>
         <li>
+            <a href="/photos/{{$photo->id}}/edit"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+        </li>
+        <li>
             <a href="#" onclick="$('#deletePhoto{{$photo->id}}').submit();"><span class="glyphicon glyphicon-trash"></span> Delete</a>
             <form id="deletePhoto{{$photo->id}}" method="POST" action="/photos/{{ $photo->id }}">
                 {{ method_field('DELETE') }}

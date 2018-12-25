@@ -13,13 +13,19 @@
 				@foreach ($set as $photo)
 					<div class="col-md-4 mb20 photo-bucket">
 
-						@include('photos._admindropdown')
+						{{-- <div class="thumbnail"> --}}
+							@include('photos._admindropdown')
 
-						<img class="{{$photo->disabled()}} hand img-rounded"
-							 src="/{{ $photo->thumbnail_path }}"
-							 alt=""
-							 data-jslghtbx="/{{ $photo->path }}"
-							 data-jslghtbx-group="gallery{{ $gallery->id }}">
+							<img class="{{$photo->disabled()}} hand img-rounded"
+								 src="/{{ $photo->thumbnail_path }}"
+								 alt=""
+								 data-jslghtbx-caption="{!!$photo->caption!!}"
+								 data-jslghtbx="/{{ $photo->path }}"
+								 data-jslghtbx-group="gallery{{ $gallery->id }}">
+
+							{{-- <div class="caption">{!! $photo->caption !!}</div> --}}
+
+						{{-- </div> --}}
 					</div>
 				@endforeach
 			</div>

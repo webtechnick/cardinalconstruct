@@ -13,7 +13,13 @@ class Photo extends Model
 {
     use ToggleActivatable;
 
-    protected $fillable = ['name', 'thumbnail_path', 'path','is_active'];
+    protected $fillable = [
+        'name',
+        'thumbnail_path',
+        'path',
+        'is_active',
+        'caption',
+    ];
 
     /**
      * A photo belongs to a gallery

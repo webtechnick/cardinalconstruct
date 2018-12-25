@@ -12,9 +12,9 @@
                     Contact Us
                 </div>
                 <div class="panel-body text-right">
-                    <p>Phone: (505) 268-2738</p>
+                    <p>Phone: {{ config('app.phone') }}</p>
 
-                    <p>Email: <a href="mailto:Cardinalinc505@aol.com">Cardinalinc505@aol.com</a></p>
+                    <p>Email: <a href="mailto:{{ config('app.email') }}">{{ config('app.email') }}</a></p>
                 </div>
             </div>
         </div>

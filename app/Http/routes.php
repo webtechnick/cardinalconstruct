@@ -34,5 +34,7 @@ Route::post('gallery/{slug}/photos', [
 	'as' => 'photos.store',
 	'uses' => 'PhotosController@store'
 ]);
-Route::delete('photos/{photo}', 'PhotosController@destroy');
-Route::get('photos/{photo}/toggle', 'PhotosController@toggle');
+Route::delete('photos/{photo}', ['as' => 'photos.delete', 'uses' => 'PhotosController@destroy']);
+Route::get('photos/{photo}/toggle', ['as' => 'photos.delete', 'uses' => 'PhotosController@toggle']);
+Route::get('photos/{photo}/edit', ['as' => 'photos.delete', 'uses' => 'PhotosController@edit']);
+Route::patch('photos/{photo}', ['as' => 'photos.delete', 'uses' => 'PhotosController@update']);
