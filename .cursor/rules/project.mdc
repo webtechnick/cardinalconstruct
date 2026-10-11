@@ -1,0 +1,93 @@
+---
+description: Cardinal Construction — project rules, wrapper CLI, conventions
+alwaysApply: true
+---
+
+# Cardinal Construction — Project Rules
+
+Coding guardrails for this repo. Operational context — the full `./cc` command
+catalog, repo map, and doc index — lives in [`AGENTS.md`](../../AGENTS.md). Architecture
+decisions live in [`docs/decisions/`](../../docs/decisions/).
+
+Ticket and timer work runs through the production MCP, never Jira — see
+[`wtn-production-mcp.mdc`](./wtn-production-mcp.mdc).
+
+## Stack
+
+Laravel **5.5** on **PHP 7.4** (Docker image `php:7.4-fpm` — required by the locked
+Composer platform check; host PHP 8.x will not run Composer cleanly). MySQL 8 + Redis
+in Compose; queue driver is `sync` locally. Frontend is the **legacy Laravel Elixir /
+Gulp 3** toolchain with **Vue 2**, Bootstrap Sass, and jQuery — asset builds run in a
+`node:10` helper container (`tools` profile), not on the host. All day-to-day work
+runs in Docker via `./cc`; do not use host PHP/Composer/npm.
+
+## Wrapper CLI (`./cc`)
+
+**All dev commands go through `./cc`.** Do not invoke `php artisan`, `composer`,
+`npm`, `gulp`, `vendor/bin/phpunit`, or `docker compose` directly — the wrapper routes
+each command into the right container against the right services.
+
+- Full command list: `./cc help`
+- Tests: `./cc test` — PHPUnit with the in-memory SQLite `testing` connection
+  (`phpunit.xml` / `config/database.php`), not the MySQL `cardinalconstruct` DB
+- Gate before finalizing: `./cc check` — runs the PHPUnit suite (no Pint on this stack)
+
+There is no in-repo deploy command today. Any production ship needs the user's
+explicit go-ahead and a confirmed deploy path (see `wtn-production-mcp.mdc`).
+
+## Conventions
+
+- Follow existing code conventions. When creating or editing a file, check sibling
+  files for structure, approach, and naming.
+- Use descriptive names over abbreviations.
+- Look for an existing component or helper to reuse before writing a new one.
+- Stick to the existing directory structure — no new base folders without approval.
+- Do not change application dependencies without approval.
+- Only create documentation files when explicitly requested.
+- This is a **marketing / brochure site** for Cardinal Construction (Albuquerque):
+  public pages, contact/quote form, project galleries + photos, customer reviews, and
+  a small admin area under `/admin` (users + review moderation). Keep changes in that
+  scope unless the user expands it.
+- Models live at `App\` root (`Gallery`, `Photo`, `Review`, `Post`, `Comment`, `User`)
+  — there is no `App\Models` namespace. Shared behavior uses traits under
+  `App\Traits\Models\` (`Sluggable`, `ToggleActivatable`).
+- Controllers are classical Laravel 5.5: string `@method` routes in `routes/web.php`,
+  `Admin\` namespace for the back office, Blade views under `resources/views/`.
+- Image work goes through **Intervention Image**; CKEditor is wired via
+  `unisharp/laravel-ckeditor`. Prefer existing upload/toggle helpers on Photo/Gallery
+  over new ad-hoc file handling.
+- Do **not** modernize the stack (Laravel upgrade, Vite, Vue 3, Pint, Pest) unless
+  the user explicitly asks — the Docker/PHP 7.4 + Elixir setup is intentional for this
+  legacy app.
+- Local `.env` must use Compose service hostnames (`DB_HOST=db`, `REDIS_HOST=redis`).
+  `.env.example` still shows Homestead defaults; do not copy those into a running
+  Docker stack without fixing hosts.
+
+## Documenting decisions
+
+Non-trivial architectural or policy choices get an ADR in `docs/decisions/`, numbered
+sequentially (`0001-title.md`), so they are not re-litigated later.
+
+- Read the existing ADRs before a non-trivial change; they capture *why* the system
+  behaves the way it does.
+- Write a new one when a decision constrains future work: storage model, auth model,
+  deploy strategy, testing policy, or an alternative worth remembering as rejected.
+- Keep the shape consistent: context, decision, consequences, alternatives rejected.
+- Link every new ADR from `docs/decisions/README.md`.
+
+## Testing
+
+PHPUnit ~6 (`tests/Feature`, `tests/Unit`), bootstrapped via `tests/TestCase.php`.
+The suite uses `DB_CONNECTION=testing` → SQLite `:memory:`.
+
+- Focused run: `./cc test --filter=GalleryTest`
+- Prefer factories / existing model helpers over hand-built rows when adding coverage.
+- Cover happy paths, failure paths, and edge cases.
+- Never remove or skip tests without approval.
+- Run the focused test while developing, then `./cc check` before finalizing.
+
+## CI / finishing a change
+
+There is **no** `.github/workflows/` CI in this repo today. The local quality bar is
+`./cc check` (PHPUnit). Run it before pushing; treat a local pass that still fails
+somewhere else as a environment/parity bug, not a reason to skip the suite.

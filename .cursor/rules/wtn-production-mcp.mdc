@@ -1,0 +1,92 @@
+---
+description: Production MCP workflow — tickets, timers, and comments for Cardinal Construction
+alwaysApply: true
+---
+
+# Production MCP (not Atlassian)
+
+Ticket, timer, and comment work for **Cardinal Construction** goes through the
+**`user-wtn-production`** MCP server only.
+
+**Do not** use the Atlassian MCP (Jira/Confluence) for this repo. When the user says
+"work on ticket #N", "close the ticket", "create a ticket", or similar, they mean
+**CC tickets** on `user-wtn-production` — not Jira issues.
+
+## Default production context
+
+| What | Value |
+|------|-------|
+| MCP server | `user-wtn-production` |
+| Project | **Cardinal Construction** (`project_id: 6`) |
+| Project client | Ted Bennett (`client_id: 6`) |
+| Acting admin | call `whoami` to confirm the `user_id` |
+
+If a call 404s or these ids look wrong, re-resolve them with `list-projects` /
+`get-project` instead of guessing.
+
+## When to create a ticket
+
+If we are doing **non-trivial work in this repo** (feature, bug fix, refactor,
+investigation with code changes) and there is no existing ticket for it, **propose
+creating one** on Cardinal Construction before or as work starts. Skip for one-line fixes,
+docs-only nits, or when the user explicitly says no ticket.
+
+Use `create-ticket` with `project_id: 6`, assigning the admin returned by
+`whoami` unless told otherwise.
+
+## Ticket lifecycle
+
+Drive the lifecycle from the SDLC workflows, not from the low-level tools. Use the
+`/start-ticket` and `/end-ticket` MCP prompts where the host expands them; where it
+does not (Cursor Cloud Agents today), call the **`sdlc-start-ticket`** /
+**`sdlc-end-ticket`** tools and follow the steps they return. Both entry points render
+the same workflow text, so the policy is identical either way — notably that shipping
+sets `awaiting_client`, never `closed`.
+
+1. **Start** — `whoami`, then `get-ticket` / `list-tickets` to load context.
+2. **Timer** — `start-timer` when implementation begins (`ticket_id` + `project_id`).
+3. **Progress** — `update-ticket` (`in_progress`, `percent_complete`) as work advances.
+4. **Ship notes** (`/end-ticket`) — two comments when detail is worth keeping:
+   - **Client** (`is_internal: false`): outcome-first, plain language. No PR numbers,
+     commits, branches, CI links, or file paths.
+   - **Internal** (`is_internal: true`, optional): engineering detail for later review
+     or a client call (PR/commit, deploy path, files, root cause). Skip if trivial.
+5. **Ship** — `update-ticket` with `status: awaiting_client`,
+   `percent_complete: 100`, and `assigned_to_user_id` set to the project client
+   (`project.client.id` from `get-ticket`). Use `status: closed` only when the user explicitly asks to
+   close. Then `stop-timer` with `ticket_id` (see **Timer** below).
+
+Comments are client-visible by default; pass `is_internal: true` for admin-only notes,
+including the optional ship engineering log.
+
+## Timer
+
+- Call `start-timer` when implementation on a ticket begins. Starting a timer does
+  **not** stop other running timers for this admin or any other admin.
+- When stopping, pass `ticket_id` (or `time_entry_id`) so only this ticket's timer
+  is closed — other concurrent timers stay running.
+- **Do not** call `stop-timer` until the full ship workflow is done: changes accepted,
+  committed, pushed, and deployed (when deploy was requested) — **or** until the user
+  explicitly says to stop.
+- Shipping the ticket and adding ship notes may happen before deploy; keep the timer
+  running until deploy completes when deploy is part of the workflow.
+
+## MCP vs local dev
+
+| Task | Use |
+|------|-----|
+| Tickets, timers, comments | `user-wtn-production` MCP |
+| Code, tests, migrations | This repo + `./cc` (see [`AGENTS.md`](../../AGENTS.md)) |
+| Production DB / production data | MCP or SSH — **never** `./cc tinker` |
+
+Local `./cc` artisan, tinker, and test commands hit the **dev** database only.
+
+## Ship / deploy
+
+**Deploy mode: `manual`.** There is no GitHub Actions (or other CI) deploy workflow
+in this repo. Shipping needs an explicit deploy after the push, and only with the
+user's go-ahead. Default branch is `master` (`agent_starting_ref` on the CC project).
+
+Until a documented deploy path lands in-repo (scripts + ADR), ask the user how this
+host is updated before attempting any production change. Do **not** invent a deploy
+command.

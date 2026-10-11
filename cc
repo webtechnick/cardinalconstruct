@@ -59,7 +59,7 @@ show_help() {
     echo -e "  ${GREEN}start${NC}       Start stopped containers"
     echo -e "  ${GREEN}restart${NC}     Restart containers"
     echo -e "  ${GREEN}rebuild${NC}     Rebuild images from scratch, then up"
-    echo -e "  ${GREEN}ps${NC}          Show container status"
+    echo -e "  ${GREEN}ps${NC} / ${GREEN}status${NC}  Show container status"
     echo -e "  ${GREEN}logs${NC} [svc]  Follow logs (all services, or one)"
     echo -e "  ${GREEN}shell${NC}       Bash into the app container"
     echo ""
@@ -67,10 +67,11 @@ show_help() {
     echo -e "  ${YELLOW}artisan${NC} <cmd>  Run an artisan command"
     echo -e "  ${YELLOW}tinker${NC}        Open Tinker REPL"
     echo -e "  ${YELLOW}migrate${NC}       php artisan migrate"
-    echo -e "  ${YELLOW}fresh${NC}         migrate:fresh --seed (drops all tables; confirm prompt)"
+    echo -e "  ${YELLOW}fresh${NC} [--yes] migrate:fresh --seed (drops all tables; confirm unless --yes)"
     echo -e "  ${YELLOW}seed${NC}          db:seed"
     echo -e "  ${YELLOW}cache${NC}         Clear config/route/view/app caches + Redis FLUSHALL"
-    echo -e "  ${YELLOW}test${NC} [args]   Run the PHPUnit suite"
+    echo -e "  ${YELLOW}test${NC} [args]   Run the PHPUnit suite (SQLite :memory: testing DB)"
+    echo -e "  ${YELLOW}check${NC}         Local quality gate: PHPUnit (fails fast)"
     echo ""
     echo -e "${BOLD}Tooling:${NC}"
     echo -e "  ${CYAN}composer${NC} <cmd> Run composer in the app container"
@@ -79,6 +80,10 @@ show_help() {
     echo -e "  ${CYAN}dev${NC}           Watch & rebuild assets (npm run dev)"
     echo -e "  ${CYAN}mysql${NC}         MySQL CLI into the cardinalconstruct database"
     echo -e "  ${CYAN}redis${NC}         redis-cli"
+    echo ""
+    echo -e "${BOLD}Notes:${NC}"
+    echo -e "  Anything else is forwarded into the ${GREEN}app${NC} container."
+    echo -e "  Production deploys need the user's explicit go-ahead (no in-repo deploy yet)."
     echo ""
     echo -e "${BOLD}Local URL:${NC} ${GREEN}http://localhost${NC}"
     echo ""
@@ -137,7 +142,7 @@ case "$1" in
         success "Containers rebuilt!"
         ;;
 
-    ps)
+    ps|status)
         $COMPOSE ps
         ;;
 
@@ -175,14 +180,25 @@ case "$1" in
 
     fresh)
         check_docker
-        warning "migrate:fresh --seed will DROP ALL TABLES."
-        read -p "Continue? (y/N) " -n 1 -r REPLY
-        echo ""
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            $COMPOSE exec "$APP" php artisan migrate:fresh --seed
+        shift
+        FORCE=0
+        if [ "${1:-}" = "--yes" ] || [ "${1:-}" = "-y" ]; then
+            FORCE=1
+            shift
+        fi
+        if [ "$FORCE" -eq 1 ]; then
+            $COMPOSE exec "$APP" php artisan migrate:fresh --seed "$@"
             success "Database refreshed and seeded!"
         else
-            info "Aborted."
+            warning "migrate:fresh --seed will DROP ALL TABLES."
+            read -p "Continue? (y/N) " -n 1 -r REPLY
+            echo ""
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                $COMPOSE exec "$APP" php artisan migrate:fresh --seed "$@"
+                success "Database refreshed and seeded!"
+            else
+                info "Aborted."
+            fi
         fi
         ;;
 
@@ -207,7 +223,14 @@ case "$1" in
         check_docker
         shift
         header "Running PHPUnit..."
-        $COMPOSE exec "$APP" ./vendor/bin/phpunit "$@"
+        $COMPOSE exec -T "$APP" ./vendor/bin/phpunit "$@"
+        ;;
+
+    check)
+        check_docker
+        header "Running local quality gate (PHPUnit)..."
+        $COMPOSE exec -T "$APP" ./vendor/bin/phpunit
+        success "All checks passed."
         ;;
 
     composer)
@@ -251,8 +274,8 @@ case "$1" in
         ;;
 
     *)
-        error "Unknown command: $1"
-        echo "Run './cc help' for available commands."
-        exit 1
+        # Forward unrecognized verbs into the app container so the CLI never blocks.
+        check_docker
+        $COMPOSE exec "$APP" "$@"
         ;;
 esac
