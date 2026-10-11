@@ -1,0 +1,10 @@
+# Cursor Cloud / fuse-overlayfs override.
+#
+# Docker named volumes backed by fuse-overlayfs break MySQL InnoDB (errno 22/122).
+# Bind-mount MySQL data to the workspace filesystem instead.
+#
+# Service name is `db` (not Sail's `mysql`) — see docker-compose.yml.
+services:
+    db:
+        volumes:
+            - './.data/mysql:/var/lib/mysql'

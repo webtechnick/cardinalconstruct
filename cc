@@ -19,17 +19,66 @@ CYAN='\033[0;36m'
 NC='\033[0m'
 BOLD='\033[1m'
 
-# Detect Docker Compose flavor (v2 plugin preferred, v1 fallback)
-if docker compose version >/dev/null 2>&1; then
-    COMPOSE="docker compose"
-elif command -v docker-compose >/dev/null 2>&1; then
-    COMPOSE="docker-compose"
-else
-    echo -e "${RED}✖${NC} Docker Compose not found. Install Docker Desktop."
-    exit 1
+APP="app"
+
+# Memoized: consulted several times per invocation and `docker info` is slow.
+CC_FUSE_CLOUD=""
+
+is_fuse_cloud() {
+    if [[ -n "$CC_FUSE_CLOUD" ]]; then
+        return "$CC_FUSE_CLOUD"
+    fi
+
+    CC_FUSE_CLOUD=1
+
+    if [[ -f /etc/docker/daemon.json ]] && grep -q 'fuse-overlayfs' /etc/docker/daemon.json 2>/dev/null; then
+        CC_FUSE_CLOUD=0
+    elif docker info 2>/dev/null | grep -q 'fuse-overlayfs'; then
+        CC_FUSE_CLOUD=0
+    elif ! docker info >/dev/null 2>&1 && sudo -n docker info 2>/dev/null | grep -q 'fuse-overlayfs'; then
+        # Only cloud pods with a root-only daemon get here. `sudo -n` keeps a
+        # laptop from ever seeing a password prompt.
+        CC_FUSE_CLOUD=0
+    fi
+
+    return "$CC_FUSE_CLOUD"
+}
+
+COMPOSE="docker compose"
+
+resolve_compose() {
+    local docker_bin="docker"
+
+    if is_fuse_cloud; then
+        export COMPOSE_FILE="${COMPOSE_FILE:-docker-compose.yml:compose.cloud.yaml}"
+        if ! docker info >/dev/null 2>&1 && sudo -n docker info >/dev/null 2>&1; then
+            docker_bin="sudo docker"
+        fi
+    fi
+
+    if $docker_bin compose version >/dev/null 2>&1; then
+        COMPOSE="$docker_bin compose"
+    elif [[ "$docker_bin" == "docker" ]] && command -v docker-compose >/dev/null 2>&1; then
+        COMPOSE="docker-compose"
+    else
+        echo -e "${RED}✖${NC} Docker Compose not found. Install Docker Desktop."
+        exit 1
+    fi
+}
+
+# Resolve now when Docker is already on PATH (laptops). Cloud first-boot may
+# install Docker inside check_docker / cloud-prepare, then re-resolve.
+if command -v docker >/dev/null 2>&1 || command -v docker-compose >/dev/null 2>&1; then
+    resolve_compose
 fi
 
-APP="app"
+cloud_prepare() {
+    bash scripts/cloud-prepare.sh
+}
+
+cloud_post_up() {
+    bash scripts/cloud-prepare.sh --post-up
+}
 
 info()    { echo -e "${BLUE}➜${NC} $1"; }
 success() { echo -e "${GREEN}✔${NC} $1"; }
@@ -38,6 +87,14 @@ error()   { echo -e "${RED}✖${NC} $1"; }
 header()  { echo -e "\n${MAGENTA}${BOLD}$1${NC}\n"; }
 
 check_docker() {
+    if is_fuse_cloud; then
+        # shellcheck source=scripts/cloud-ensure-docker.sh
+        source "$(dirname "${BASH_SOURCE[0]}")/scripts/cloud-ensure-docker.sh"
+        ensure_docker
+        resolve_compose
+        return
+    fi
+
     if ! docker info > /dev/null 2>&1; then
         error "Docker is not running. Please start Docker Desktop first."
         exit 1
@@ -84,13 +141,17 @@ show_help() {
     echo -e "${BOLD}Notes:${NC}"
     echo -e "  Anything else is forwarded into the ${GREEN}app${NC} container."
     echo -e "  Production deploys need the user's explicit go-ahead (no in-repo deploy yet)."
+    echo -e "  On Cursor Cloud (fuse-overlayfs), ${GREEN}up${NC}/${GREEN}check${NC} auto-apply compose.cloud.yaml."
     echo ""
-    echo -e "${BOLD}Local URL:${NC} ${GREEN}http://localhost${NC}"
+    echo -e "${BOLD}Local URL:${NC} ${GREEN}http://localhost${NC} (Cloud: ${GREEN}http://cardinalconstruct.test${NC})"
     echo ""
 }
 
 case "$1" in
     up)
+        if is_fuse_cloud; then
+            cloud_prepare
+        fi
         check_docker
         if [ ! -f .env ]; then
             info "Creating .env from .env.example..."
@@ -107,8 +168,15 @@ case "$1" in
             $COMPOSE exec -T "$APP" php artisan key:generate \
                 || warning "key:generate failed — run './cc composer install' first, then './cc artisan key:generate'."
         fi
+        if is_fuse_cloud; then
+            cloud_post_up
+        fi
         success "Containers started!"
-        echo -e "  ${CYAN}➜${NC} App: ${GREEN}http://localhost${NC}"
+        if is_fuse_cloud; then
+            echo -e "  ${CYAN}➜${NC} App: ${GREEN}http://cardinalconstruct.test${NC}"
+        else
+            echo -e "  ${CYAN}➜${NC} App: ${GREEN}http://localhost${NC}"
+        fi
         ;;
 
     down)
@@ -187,7 +255,7 @@ case "$1" in
             shift
         fi
         if [ "$FORCE" -eq 1 ]; then
-            $COMPOSE exec "$APP" php artisan migrate:fresh --seed "$@"
+            $COMPOSE exec -T "$APP" php artisan migrate:fresh --seed "$@"
             success "Database refreshed and seeded!"
         else
             warning "migrate:fresh --seed will DROP ALL TABLES."
@@ -227,7 +295,14 @@ case "$1" in
         ;;
 
     check)
+        if is_fuse_cloud; then
+            cloud_prepare
+        fi
         check_docker
+        if is_fuse_cloud && ! $COMPOSE ps --status running --services 2>/dev/null | grep -qx app; then
+            $COMPOSE up -d --build
+            cloud_post_up
+        fi
         header "Running local quality gate (PHPUnit)..."
         $COMPOSE exec -T "$APP" ./vendor/bin/phpunit
         success "All checks passed."

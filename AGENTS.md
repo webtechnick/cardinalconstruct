@@ -109,8 +109,33 @@ asked.
 
 ## Local notes
 
-- App URL: `http://localhost` (nginx on port 80).
+- App URL: `http://localhost` (nginx on port 80). On Cursor Cloud:
+  `http://cardinalconstruct.test`.
 - Compose DB credentials: database/user `cardinalconstruct`, password `password`
   (see `docker-compose.yml`). `.env` must use `DB_HOST=db` / `REDIS_HOST=redis`.
 - Asset builds need the `tools` profile (`./cc build` / `./cc npm`); they are not
-  part of a normal `./cc up`.
+  part of a normal `./cc up`. Committed `public/css` + `public/js` cover first paint.
+
+## Cursor Cloud
+
+On Cursor Cloud desktops **`./cc` auto-detects fuse-overlayfs** and applies
+`compose.cloud.yaml` so MySQL data bind-mounts to `.data/mysql` (named volumes
+break InnoDB on fuse-overlayfs).
+
+```bash
+./cc up              # cloud-prepare → compose up → post-up (key, fresh --yes, assets)
+./cc check           # PHPUnit (starts the stack first if needed)
+curl -I http://cardinalconstruct.test/
+```
+
+`.cursor/environment.json` runs `scripts/cloud-install.sh` (Docker + Composer)
+and `scripts/cloud-start.sh` (hosts entry + `./cc up`) on agent boot. After you
+verify once, **save an environment snapshot** from the
+[Cloud Agents dashboard](https://cursor.com/dashboard/cloud-agents#environments)
+and paste the snapshot id into `.cursor/environment.json`.
+
+Secrets added in the Cursor Cloud **Secrets panel** arrive as host env vars.
+`scripts/cloud-prepare.sh` mirrors an allowlist (`CLOUD_SECRET_KEYS` — Mailgun,
+Stripe, Google, SES, mail credentials) into the bind-mounted `.env`. Add any new
+integration key to that list or it will not reach the containers. Do **not**
+paste secret values into git.
