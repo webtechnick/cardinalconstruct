@@ -121,9 +121,12 @@ ensure_vendor() {
     fi
 
     log "Installing Composer dependencies (first run can take a few minutes)..."
+    # --no-scripts: Laravel 5.5 post-install runs `php artisan optimize`, which
+    # exits 255 on PHP 8.4 (deprecations). Vendor-only install here; artisan
+    # runs later inside the PHP 7.4 app container after ./cc up.
     docker_cmd run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" \
         -w /var/www/html laravelsail/php84-composer:latest \
-        composer install --ignore-platform-reqs --no-interaction
+        composer install --ignore-platform-reqs --no-interaction --no-scripts
     ok "Composer vendor installed"
 }
 

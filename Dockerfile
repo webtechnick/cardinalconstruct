@@ -9,8 +9,17 @@ FROM php:7.4-fpm
 # Set working directory
 WORKDIR /var/www
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+# Install system dependencies.
+# php:7.4-fpm is Debian bullseye; deb.debian.org/debian-security currently 404s
+# several bullseye-security pool files (Packages index ahead of CDN). Point apt
+# at archive.debian.org so Cloud/local image builds can still install packages.
+RUN sed -i \
+      -e 's|http://deb.debian.org/debian-security|http://archive.debian.org/debian-security|g' \
+      -e 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' \
+      /etc/apt/sources.list \
+    && printf 'Acquire::Check-Valid-Until "false";\n' \
+      > /etc/apt/apt.conf.d/99no-check-valid-until \
+    && apt-get update && apt-get install -y \
     git \
     curl \
     libpng-dev \

@@ -12,7 +12,10 @@ ensure_docker
 # Committed public/css + public/js cover first paint without a host npm install.
 
 if [[ ! -f vendor/autoload.php ]]; then
+    # --no-scripts: Laravel 5.5 post-install runs `php artisan optimize`, which
+    # exits 255 on PHP 8.4 (deprecations). Vendor-only install here; artisan
+    # runs later inside the PHP 7.4 app container after ./cc up.
     docker_cmd run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" \
         -w /var/www/html laravelsail/php84-composer:latest \
-        composer install --ignore-platform-reqs --no-interaction
+        composer install --ignore-platform-reqs --no-interaction --no-scripts
 fi
